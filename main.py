@@ -3,8 +3,6 @@ import io
 import sys
 import os
 import discord
-import asyncio
-import functools
 from dotenv import load_dotenv
 
 running = True
@@ -65,10 +63,15 @@ async def start_server():
                 img_bytes = recvall(conn, n_bytes)
                 # Check an image was received
                 if img_bytes is not None:
+                    # Decode and add border to the image
                     print("    - Received")
+                    # Receive author name
+                    n_bytes = int.from_bytes(conn.recv(4), "big")
+                    author = recvall(conn, n_bytes).decode()
+                    print("    - Author: " + author)
                     # Send the image to Discord
-                    img = discord.File(io.BytesIO(img_bytes), "turtle-drawing.png")
-                    await channel.send(file=img)
+                    discord_img = discord.File(io.BytesIO(img_bytes), "turtle-drawing.png")
+                    await channel.send(file=discord_img)
                 else:
                     # Failed to receive image
                     print("    X | FAILED")
