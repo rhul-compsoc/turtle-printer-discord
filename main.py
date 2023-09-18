@@ -71,7 +71,7 @@ async def start_server():
                     print("    - Author: " + author)
                     # Send the image to Discord
                     discord_img = discord.File(io.BytesIO(img_bytes), "turtle-drawing.png")
-                    await channel.send(file=discord_img)
+                    await channel.send(embed=discord.Embed(title=f"by {author}"), file=discord_img)
                 else:
                     # Failed to receive image
                     print("    X | FAILED")
