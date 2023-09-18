@@ -1,10 +1,21 @@
 import socket
 import io
+import dotenv
+import sys
+import os
 from PIL import Image
 
 running = True
 
-PORT = 4444
+try:
+    PORT = int(os.environ["PORT"])
+    DISCORD_TOKEN = os.environ["DISCORD_TOKEN"]
+except KeyError as e:
+    print(f"Missing config value {e}")
+    sys.exit(1)
+except ValueError:
+    print('Config value TURTLE_PORT must be an integer')
+    sys.exit(1)
 
 # recvall allows a large amount of data to be received from a socket without fragmentation
 def recvall(sock, n_bytes):
@@ -34,7 +45,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
             n_bytes = int.from_bytes(conn.recv(4), "big")
             print(f"    - Expecting {n_bytes} bytes")
             # Now receive whole image
-            img_bytes = recvall(sock, n_bytes)
+            img_bytes = recvall(conn, n_bytes)
             # Check an image was received
             if img_bytes is not None:
                 print("    - Received")
